@@ -1,33 +1,43 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { fetchCards } from "api";
 import { RootState } from "reducers";
 import { useDispatch, useSelector } from "react-redux";
-import { getCards } from "actions";
+import { getCards, addPageNum } from "actions";
 import check from "images/bt-checkbox-checked.svg";
 import bookmark from "images/on-img.svg";
 import blueBookmark from "images/blue.svg";
 
 const Feed = () => {
   const dispatch = useDispatch();
-  const { cards } = useSelector((state: RootState) => state.CardReducer);
+  const { cards, hasMore, pageNum } = useSelector(
+    (state: RootState) => state.CardReducer
+  );
 
   useEffect(() => {
     (async () => {
-      const res = await fetchCards(1);
+      const res = await fetchCards(pageNum);
       dispatch(getCards(res));
     })();
-  }, [dispatch]);
+    console.log(pageNum);
+  }, [pageNum, dispatch]);
 
-  const handleScroll = () => {
-    const el = document.documentElement;
-    console.log(el.scrollTop);
-  };
+  const handleScroll = useCallback(() => {
+    const scrollTop = document.documentElement.scrollTop;
+    const clientHeight = document.documentElement.clientHeight;
+    const scrollHeight = document.documentElement.scrollHeight;
+    if (!hasMore) {
+      return;
+    }
+    if (scrollTop + clientHeight === scrollHeight) {
+      dispatch(addPageNum());
+    }
+  }, [dispatch, hasMore]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, true);
     return window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [handleScroll]);
 
   return (
     <FeedLayout>

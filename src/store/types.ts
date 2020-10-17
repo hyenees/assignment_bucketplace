@@ -1,4 +1,5 @@
 export const GET_CARDS = "GET_CARDS";
+export const ADD_PAGE_NUM = "ADD_PAGE_NUM";
 
 export interface Card {
   id: number;
@@ -9,6 +10,8 @@ export interface Card {
 
 export interface CardState {
   cards: Card[];
+  hasMore: boolean;
+  pageNum: number;
 }
 
 export interface GetCardsAction {
@@ -16,4 +19,8 @@ export interface GetCardsAction {
   payload: Card[];
 }
 
-export type CardActionTypes = GetCardsAction;
+export interface AddPageNumAction {
+  type: typeof ADD_PAGE_NUM;
+}
+
+export type CardActionTypes = GetCardsAction | AddPageNumAction;
