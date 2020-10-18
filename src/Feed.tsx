@@ -3,14 +3,15 @@ import styled from "styled-components";
 import { fetchCards } from "api";
 import { RootState } from "reducers";
 import { useDispatch, useSelector } from "react-redux";
-import { getCards, addPageNum } from "actions";
-import check from "images/bt-checkbox-checked.svg";
+import { getCards, addPageNum, addScrapCard, removeScrapCard } from "actions";
+import checked from "images/bt-checkbox-checked.svg";
+import unchecked from "images/bt-checkbox.svg";
 import bookmark from "images/on-img.svg";
 import blueBookmark from "images/blue.svg";
 
 const Feed = () => {
   const dispatch = useDispatch();
-  const { cards, hasMore, pageNum } = useSelector(
+  const { cards, hasMore, pageNum, scrapedIds } = useSelector(
     (state: RootState) => state.CardReducer
   );
 
@@ -42,7 +43,7 @@ const Feed = () => {
   return (
     <FeedLayout>
       <Filter>
-        <img src={check} alt="check" />
+        <img src={unchecked} alt="check" />
         스크랩한 것만 보기
       </Filter>
       <Cards>
@@ -57,7 +58,19 @@ const Feed = () => {
               <div className="nickname">{card.nickname}</div>
             </UserInfo>
             <Image src={card.image_url} />
-            <ToggleImg src={bookmark} alt="bookmark" />
+            {scrapedIds.includes(card.id) ? (
+              <BookmarkBtn
+                src={blueBookmark}
+                alt="bookmark"
+                onClick={() => dispatch(removeScrapCard(card))}
+              />
+            ) : (
+              <BookmarkBtn
+                src={bookmark}
+                alt="bookmark"
+                onClick={() => dispatch(addScrapCard(card))}
+              />
+            )}
           </Card>
         ))}
       </Cards>
@@ -82,6 +95,7 @@ const Filter = styled.div`
     width: 24px;
     height: 24px;
     margin-right: 6px;
+    cursor: pointer;
   }
 `;
 
@@ -119,9 +133,10 @@ const Image = styled.img`
   width: 268px;
   height: 268px;
   border-radius: 10px;
+  cursor: pointer;
 `;
 
-const ToggleImg = styled.img`
+const BookmarkBtn = styled.img`
   position: absolute;
   bottom: 10px;
   right: 30px;
