@@ -1,9 +1,16 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useCallback } from "react";
 import styled from "styled-components";
 import { fetchCards } from "api";
 import { RootState } from "reducers";
 import { useDispatch, useSelector } from "react-redux";
-import { getCards, addPageNum, addScrapCard, removeScrapCard } from "actions";
+import {
+  getCards,
+  addPageNum,
+  addScrapCard,
+  removeScrapCard,
+  toggleFilterBtn,
+  toggleScrapBtn,
+} from "actions";
 import checked from "images/bt-checkbox-checked.svg";
 import unchecked from "images/bt-checkbox.svg";
 import bookmark from "images/on-img.svg";
@@ -11,16 +18,20 @@ import blueBookmark from "images/blue.svg";
 
 const Feed = () => {
   const dispatch = useDispatch();
-  const { cards, hasMore, pageNum, scrapedIds } = useSelector(
+  const { cards, hasMore, pageNum, scrapList, isChecked } = useSelector(
     (state: RootState) => state.CardReducer
   );
+  const showingCards = isChecked ? scrapList : cards;
 
   useEffect(() => {
     (async () => {
-      const res = await fetchCards(pageNum);
-      dispatch(getCards(res));
+      try {
+        const res = await fetchCards(pageNum);
+        dispatch(getCards(res));
+      } catch (err) {
+        console.log(err);
+      }
     })();
-    console.log(pageNum);
   }, [pageNum, dispatch]);
 
   const handleScroll = useCallback(() => {
@@ -43,11 +54,17 @@ const Feed = () => {
   return (
     <FeedLayout>
       <Filter>
-        <img src={unchecked} alt="check" />
+        <img
+          src={isChecked ? checked : unchecked}
+          alt="check"
+          onClick={() => {
+            dispatch(toggleFilterBtn());
+          }}
+        />
         스크랩한 것만 보기
       </Filter>
       <Cards>
-        {cards.map((card) => (
+        {showingCards.map((card) => (
           <Card key={card.id}>
             <UserInfo>
               <img
@@ -58,19 +75,16 @@ const Feed = () => {
               <div className="nickname">{card.nickname}</div>
             </UserInfo>
             <Image src={card.image_url} />
-            {scrapedIds.includes(card.id) ? (
-              <BookmarkBtn
-                src={blueBookmark}
-                alt="bookmark"
-                onClick={() => dispatch(removeScrapCard(card))}
-              />
-            ) : (
-              <BookmarkBtn
-                src={bookmark}
-                alt="bookmark"
-                onClick={() => dispatch(addScrapCard(card))}
-              />
-            )}
+            <BookmarkBtn
+              src={card.isScraped ? blueBookmark : bookmark}
+              alt="bookmark"
+              onClick={() => {
+                dispatch(toggleScrapBtn(card.id));
+                card.isScraped
+                  ? dispatch(addScrapCard(card))
+                  : dispatch(removeScrapCard(card));
+              }}
+            />
           </Card>
         ))}
       </Cards>
@@ -133,7 +147,6 @@ const Image = styled.img`
   width: 268px;
   height: 268px;
   border-radius: 10px;
-  cursor: pointer;
 `;
 
 const BookmarkBtn = styled.img`
@@ -143,4 +156,5 @@ const BookmarkBtn = styled.img`
   width: 32px;
   height: 32px;
   object-fit: contain;
+  cursor: pointer;
 `;

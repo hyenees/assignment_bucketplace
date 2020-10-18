@@ -5,7 +5,9 @@ import {
   ADD_PAGE_NUM,
   ADD_SCRAP_CARD,
   REMOVE_SCRAP_CARD,
+  TOGGLE_FILTER_BTN,
   Card,
+  TOGGLE_SCRAP_BTN,
 } from "../store/types";
 
 const initialState: CardState = {
@@ -13,7 +15,7 @@ const initialState: CardState = {
   hasMore: true,
   pageNum: 1,
   scrapList: [],
-  scrapedIds: [],
+  isChecked: false,
 };
 
 const CardReducer = (
@@ -26,26 +28,35 @@ const CardReducer = (
       const scrapCards: Card[] = stringScrapCards
         ? JSON.parse(stringScrapCards)
         : [];
-      const isScraped: number[] = state.scrapedIds;
-      action.payload.forEach((card) => {
-        scrapCards.forEach((scrapCard) => {
-          if (card.id === scrapCard.id) {
-            isScraped.push(scrapCard.id);
-          }
-        });
+      const newCards = action.payload.map((card) => {
+        const scrap = scrapCards.find((scrapCard) => scrapCard.id === card.id);
+        const newObj = { ...card };
+        if (scrap) {
+          newObj.isScraped = true;
+        } else {
+          newObj.isScraped = false;
+        }
+        return newObj;
       });
       if (action.payload.length === 0) {
         return { ...state, hasMore: false };
       } else {
         return {
           ...state,
-          cards: state.cards.concat(action.payload),
+          cards: state.cards.concat(newCards),
           scrapList: scrapCards,
-          scrapedIds: isScraped,
         };
       }
     case ADD_PAGE_NUM:
       return { ...state, pageNum: state.pageNum + 1 };
+    case TOGGLE_SCRAP_BTN:
+      const newCard = state.cards.map((card) => {
+        if (card.id === action.id) {
+          card.isScraped = !card.isScraped;
+        }
+        return card;
+      });
+      return { ...state, cards: newCard };
     case ADD_SCRAP_CARD:
       let scrap = state.scrapList;
       scrap = scrap.concat(action.payload);
@@ -53,21 +64,24 @@ const CardReducer = (
       return {
         ...state,
         scrapList: scrap,
-        scrapedIds: state.scrapedIds.concat(action.payload.id),
       };
     case REMOVE_SCRAP_CARD:
       const stringScrap = localStorage.getItem("SCRAP");
       const prevScrap: Card[] = stringScrap ? JSON.parse(stringScrap) : [];
-      const removedScrap = prevScrap.filter(
-        (card) => card.id !== action.payload.id
-      );
+      const removedScrap = prevScrap.filter((card) => {
+        return card.id !== action.payload.id;
+      });
       localStorage.setItem("SCRAP", JSON.stringify(removedScrap));
+
       return {
         ...state,
         scrapList: removedScrap,
-        scrapedIds: state.scrapedIds.filter((id) => id !== action.payload.id),
       };
-
+    case TOGGLE_FILTER_BTN:
+      return {
+        ...state,
+        isChecked: !state.isChecked,
+      };
     default:
       return state;
   }
