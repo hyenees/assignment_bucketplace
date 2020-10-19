@@ -4,6 +4,8 @@ export const TOGGLE_SCRAP_BTN = "TOGGLE_SCRAP_BTN";
 export const ADD_SCRAP_CARD = "ADD_SCRAP_CARD";
 export const REMOVE_SCRAP_CARD = "REMOVE_SCRAP_CARD";
 export const TOGGLE_FILTER_BTN = "TOGGLE_FILTER_BTN";
+export const SHOW_TOAST = "SHOW_TOAST";
+export const DELETE_TOAST = "DELETE_TOAST";
 
 export interface Card {
   id: number;
@@ -13,12 +15,21 @@ export interface Card {
   isScraped: boolean;
 }
 
+export interface Toast {
+  id: number;
+  description: string;
+}
+
 export interface CardState {
   cards: Card[];
   hasMore: boolean;
   pageNum: number;
   scrapList: Card[];
   isChecked: boolean;
+}
+
+export interface ToastState {
+  toastList: Toast[];
 }
 
 export interface GetCardsAction {
@@ -49,6 +60,16 @@ export interface ToggleFilterBtnAction {
   type: typeof TOGGLE_FILTER_BTN;
 }
 
+export interface ShowToastAction {
+  type: typeof SHOW_TOAST;
+  description: string;
+}
+
+export interface DeleteToastAction {
+  type: typeof DELETE_TOAST;
+  id: number;
+}
+
 export type CardActionTypes =
   | GetCardsAction
   | AddPageNumAction
@@ -56,3 +77,5 @@ export type CardActionTypes =
   | AddScrapCardAction
   | RemoveScrapCardAction
   | ToggleFilterBtnAction;
+
+export type ToastActionTypes = ShowToastAction | DeleteToastAction;

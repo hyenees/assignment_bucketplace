@@ -12,6 +12,10 @@ import {
   REMOVE_SCRAP_CARD,
   ToggleFilterBtnAction,
   TOGGLE_FILTER_BTN,
+  ShowToastAction,
+  SHOW_TOAST,
+  DeleteToastAction,
+  DELETE_TOAST,
 } from "store/types";
 
 export const getCards = (cards: Card[]): GetCardsAction => {
@@ -51,5 +55,19 @@ export const removeScrapCard = (card: Card): RemoveScrapCardAction => {
 export const toggleFilterBtn = (): ToggleFilterBtnAction => {
   return {
     type: TOGGLE_FILTER_BTN,
+  };
+};
+
+export const showToast = (description: string): ShowToastAction => {
+  return {
+    type: SHOW_TOAST,
+    description,
+  };
+};
+
+export const deleteToast = (id: number): DeleteToastAction => {
+  return {
+    type: DELETE_TOAST,
+    id,
   };
 };

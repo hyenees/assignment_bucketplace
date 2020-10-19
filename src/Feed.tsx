@@ -10,13 +10,15 @@ import {
   removeScrapCard,
   toggleFilterBtn,
   toggleScrapBtn,
+  showToast,
 } from "actions";
+import Notice from "components/Toast";
 import checked from "images/bt-checkbox-checked.svg";
 import unchecked from "images/bt-checkbox.svg";
 import bookmark from "images/on-img.svg";
 import blueBookmark from "images/blue.svg";
 
-const Feed = () => {
+const Feed: React.FunctionComponent = () => {
   const dispatch = useDispatch();
   const { cards, hasMore, pageNum, scrapList, isChecked } = useSelector(
     (state: RootState) => state.CardReducer
@@ -63,6 +65,7 @@ const Feed = () => {
         />
         스크랩한 것만 보기
       </Filter>
+      <Notice />
       <Cards>
         {showingCards.map((card) => (
           <Card key={card.id}>
@@ -82,9 +85,11 @@ const Feed = () => {
                 if (card.isScraped) {
                   dispatch(toggleScrapBtn(card.id));
                   dispatch(removeScrapCard(card));
+                  dispatch(showToast("스크랩을 해제했습니다."));
                 } else {
                   dispatch(toggleScrapBtn(card.id));
                   dispatch(addScrapCard(card));
+                  dispatch(showToast("스크랩 되었습니다."));
                 }
               }}
             />
