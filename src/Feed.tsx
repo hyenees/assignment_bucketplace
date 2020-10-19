@@ -79,10 +79,13 @@ const Feed = () => {
               src={card.isScraped ? blueBookmark : bookmark}
               alt="bookmark"
               onClick={() => {
-                dispatch(toggleScrapBtn(card.id));
-                card.isScraped
-                  ? dispatch(addScrapCard(card))
-                  : dispatch(removeScrapCard(card));
+                if (card.isScraped) {
+                  dispatch(toggleScrapBtn(card.id));
+                  dispatch(removeScrapCard(card));
+                } else {
+                  dispatch(toggleScrapBtn(card.id));
+                  dispatch(addScrapCard(card));
+                }
               }}
             />
           </Card>
