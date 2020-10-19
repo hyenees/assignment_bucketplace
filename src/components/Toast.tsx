@@ -43,7 +43,7 @@ const ToastBox = styled.div`
   justify-content: center;
   align-items: center;
   width: 200px;
-  height: 60px;
+  height: 54px;
   margin: 12px;
   background: rgba(55, 60, 61, 0.9);
   border-radius: 8px;
