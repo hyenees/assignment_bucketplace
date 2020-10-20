@@ -61,8 +61,13 @@ const CardListLayout = styled.div`
 `;
 
 const Card = styled.div`
+  flex: 0 0 25%;
   position: relative;
-  padding: 30px 20px 0 0;
+  padding: 30px 21px 0 0;
+
+  @media (max-width: 768px) {
+    flex: 0 0 50%;
+  }
 `;
 
 const UserInfo = styled.div`
@@ -85,15 +90,15 @@ const UserInfo = styled.div`
 `;
 
 const Image = styled.img`
-  width: 268px;
-  height: 268px;
+  display: block;
+  width: 100%;
   border-radius: 10px;
 `;
 
 const BookmarkBtn = styled.img`
   position: absolute;
   bottom: 10px;
-  right: 30px;
+  right: 31px;
   width: 32px;
   height: 32px;
   object-fit: contain;

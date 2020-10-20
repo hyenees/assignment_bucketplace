@@ -9,12 +9,10 @@ ${reset};
     padding: 0px;
     box-sizing:border-box;
 }
+
 body {
   font-size: 15px;
   font-family: 'AppleSDGothicNeo';
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
   line-height: normal;
   letter-spacing: normal;
 }
@@ -23,6 +21,7 @@ body {
     font-family: 'AppleSDGothicNeo';
     src: url(${AppleSDGothicNeo}) format('truetype');
     font-weight: normal;
+    font-stretch: normal;
     font-style: normal;
 }
 
