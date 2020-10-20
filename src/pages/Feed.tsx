@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { RootState } from "reducers";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,24 +23,22 @@ const Feed: React.FunctionComponent = () => {
         console.log(err);
       }
     })();
-  }, [pageNum, dispatch]);
-
-  const handleScroll = useCallback(() => {
-    const scrollTop = document.documentElement.scrollTop;
-    const clientHeight = document.documentElement.clientHeight;
-    const scrollHeight = document.documentElement.scrollHeight;
-    if (!hasMore) {
-      return;
-    }
-    if (scrollTop + clientHeight === scrollHeight) {
-      dispatch(addPageNum());
-    }
-  }, [dispatch, hasMore]);
+  }, [pageNum, dispatch, hasMore]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll, true);
-    return window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop ===
+          document.documentElement.offsetHeight &&
+        hasMore
+      ) {
+        dispatch(addPageNum());
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [dispatch, hasMore]);
 
   return (
     <FeedLayout>

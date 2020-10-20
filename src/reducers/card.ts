@@ -39,8 +39,8 @@ const CardReducer = (
       });
       return {
         ...state,
-        hasMore: action.payload.length === 0 && false,
         cards: state.cards.concat(newCards),
+        hasMore: action.payload.length === 0 ? false : true,
       };
     case ADD_PAGE_NUM:
       return { ...state, pageNum: state.pageNum + 1 };
